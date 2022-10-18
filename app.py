@@ -81,3 +81,17 @@ def logout_user():
     session.pop('username')
     flash(f"Goodbye!", "success")
     return redirect('/')
+
+
+@app.route('/users/<username>')
+def show_user_details(username):
+    """Show details about the current user. You must be logged in as the specified user to see this page"""
+
+    if username != session.get('username'):
+        flash("You don't have permission to view this page.", "warning")
+        return redirect('/')
+
+    user = User.query.filter_by(username=username).first()
+
+    if user:
+        return render_template("user.html", user=user)

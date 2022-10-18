@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Profile</title>
+{% endblock %}
+
+{% block content %}
+<h1 class="display-4">Profile</h1>
+<hr>
+<div style="max-width: 500px;">
+    <table class="table">
+        <tbody>
+            <tr>
+                <th scope="row">Username</th>
+                <td>{{user.username}}</td>
+            </tr>
+            <tr>
+                <th scope="row">First Name</th>
+                <td>{{user.first_name}}</td>
+            </tr>
+            <tr>
+                <th scope="row">Last Name</th>
+                <td>{{user.last_name}}</td>
+            </tr>
+            <tr>
+                <th scope="row">Email</th>
+                <td>{{user.email}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}
