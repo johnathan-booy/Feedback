@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Sign Up</title>
+{% endblock %}
+
+{% block content %}
+<h1 class="display-4">Sign Up</h1>
+<p class="lead">Already have an account? <a href="/login">Login here!</a></p>
+<hr>
+<div class="container">
+    <form method="post">
+        {% include 'wtform.html' %}
+        <button class="btn btn-success">Register</button>
+    </form>
+</div>
+{% endblock %}
