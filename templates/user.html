@@ -8,6 +8,10 @@
 <h1 class="display-4">Profile</h1>
 <hr>
 <div style="max-width: 500px;">
+    <form action="/user/{{user.username}}/delete" method="POST">
+        <button class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i> <span class="mx-1">Delete</span>
+        </button>
+    </form>
     <table class="table">
         <tbody>
             <tr>
@@ -28,6 +32,7 @@
             </tr>
         </tbody>
     </table>
+
 </div>
 
 {% if feedback %}
@@ -37,7 +42,7 @@
         <div class="card-body justify-content-left d-flex">
             <div>
                 <form action="/feedback/{{fb.id}}/delete" method="POST">
-                    <button class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i></button>
+                    <button class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i></button>
                 </form>
             </div>
             <div class="mx-3">

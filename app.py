@@ -98,6 +98,23 @@ def show_user_details(username):
         return render_template("user.html", user=user, feedback=feedback)
 
 
+@app.route('/user/<username>/delete', methods=['POST'])
+def delete_user(username):
+    """Delete user if they are signed in"""
+
+    user = User.query.filter_by(username=username).first()
+
+    if username != session.get('username'):
+        flash("You don't have permission to delete this user!", 'danger')
+        return redirect('/')
+
+    db.session.delete(user)
+    db.session.commit()
+    session.pop('username')
+    flash("User has been deleted", 'success')
+    return redirect('/')
+
+
 @app.route('/feedback/<int:feedback_id>/delete', methods=['POST'])
 def delete_feedback(feedback_id):
     """Delete feedback if the correct user is signed in"""
