@@ -16,8 +16,6 @@ debug = DebugToolbarExtension(app)
 
 connect_db(app)
 
-KEY_USER_ID = 'user_id'
-
 
 @app.route('/')
 def home_page():
@@ -44,11 +42,11 @@ def register_user():
                     form.email.errors.append("Email is already taken!")
             return render_template('register.html', form=form)
 
-        session[KEY_USER_ID] = new_user.id
+        session['username'] = new_user.username
 
         flash(
             f"Welcome {new_user.first_name.title()}! We've created an account for you!", "success")
-        return redirect('/')
+        return redirect(f'/users/{new_user.username}')
     else:
         return render_template('register.html', form=form)
 
@@ -57,7 +55,7 @@ def register_user():
 def login_user():
     """Show and process the login form for existing users"""
 
-    if KEY_USER_ID in session:
+    if 'user_id' in session:
         flash("You are already logged in!", "warning")
         return redirect('/')
 
@@ -68,10 +66,18 @@ def login_user():
         user = User.authenticate(username, password)
 
         if user:
-            session[KEY_USER_ID] = user.id
+            session['username'] = user.username
             flash(f"Welcome back {user.first_name}!", "success")
-            return redirect('/')
+            return redirect(f'/users/{user.username}')
 
         flash("Incorrect username or password!", "danger")
 
     return render_template("login.html", form=form)
+
+
+@app.route('/logout', methods=['GET'])
+def logout_user():
+    """Logout user, removing id from the session"""
+    session.pop('username')
+    flash(f"Goodbye!", "success")
+    return redirect('/')
