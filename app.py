@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template, redirect, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
-from models import db, connect_db, User
+from models import db, connect_db, User, Feedback
 from forms import LoginForm, RegisterForm
 from helpers import create_new_user
 
@@ -94,4 +94,21 @@ def show_user_details(username):
     user = User.query.filter_by(username=username).first()
 
     if user:
-        return render_template("user.html", user=user)
+        feedback = Feedback.query.filter_by(username=username).all()
+        return render_template("user.html", user=user, feedback=feedback)
+
+
+@app.route('/feedback/<int:feedback_id>/delete', methods=['POST'])
+def delete_feedback(feedback_id):
+    """Delete feedback if the correct user is signed in"""
+
+    feedback = Feedback.query.get(feedback_id)
+
+    if feedback.username != session.get('username'):
+        flash("You don't have permission to delete this feedback!", 'danger')
+        return redirect('/')
+
+    db.session.delete(feedback)
+    db.session.commit()
+    flash("Feedback has been deleted", 'success')
+    return redirect(f'/users/{feedback.username}')
