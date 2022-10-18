@@ -16,6 +16,8 @@ debug = DebugToolbarExtension(app)
 
 connect_db(app)
 
+KEY_USER_ID = 'user_id'
+
 
 @app.route('/')
 def home_page():
@@ -31,15 +33,21 @@ def show_register_form():
     if form.validate_on_submit():
         new_user = create_new_user(form)
         db.session.add(new_user)
+
         try:
             db.session.commit()
-            flash(
-                f"Welcome {new_user.first_name.title()}! We've created an account for you!", "success")
-            return redirect('/')
         except IntegrityError as e:
             for arg in e.args:
                 if 'username' in arg:
                     form.username.errors.append("Username is already taken!")
                 if 'email' in arg:
                     form.email.errors.append("Email is already taken!")
-    return render_template('register.html', form=form)
+            return render_template('register.html', form=form)
+
+        session[KEY_USER_ID] = new_user.id
+
+        flash(
+            f"Welcome {new_user.first_name.title()}! We've created an account for you!", "success")
+        return redirect('/')
+    else:
+        return render_template('register.html', form=form)
