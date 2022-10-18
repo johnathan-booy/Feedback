@@ -11,7 +11,7 @@
 	<!-- <link rel="stylesheet" href="https://unpkg.com/jasmine-core@4.1.0/lib/jasmine-core/jasmine.css" /> -->
 
 	<!-- Bootstrap -->
-	<link rel="stylesheet" href="https://bootswatch.com/4/lumen/bootstrap.min.css">
+	<link rel="stylesheet" href="https://bootswatch.com/5/flatly/bootstrap.min.css">
 
 	<!-- Font Awesome -->
 	<!-- <script src="https://kit.fontawesome.com/7411db11d8.js" crossorigin="anonymous"></script> -->
@@ -24,25 +24,28 @@
 	<nav class="navbar navbar-light bg-primary justify-content-between">
 		<div class="container">
 			<a href="/" class="navbar-brand text-light">Stupid Twitter</a>
-			<ul class="nav navbar-nav flex-row float-right">
-				<li class="nav-item">
-					<a class="nav-link pr-3 text-light" href="">Login</a>
+			<ul class="nav navbar-nav flex-row">
+				<li class="nav-item mx-2">
+					<a class="nav-link text-light" href="/login">Login</a>
 				</li>
-				<li class="nav-item">
-					<a class="nav-link pr-3 text-light" href="">Sign up</a>
+				<li class="nav-item mx-2">
+					<a class="nav-link text-light" href="/register">Sign up</a>
 				</li>
 			</ul>
 		</div>
 	</nav>
 
-	<div class="container text-center bg-white">
-		{% for msg in get_flashed_messages() %}
-		<div class="alert alert-danger">
-			{{msg}}
+	<div class="container mt-3">
+
+		{% for category, message in get_flashed_messages() %}
+		<div class="alert alert-{{category}} mb-3">
+			{{message}}
 		</div>
 		{% endfor %}
+
 		{% block content %}
 		{% endblock %}
+
 	</div>
 
 	<!-- jQuery -->
