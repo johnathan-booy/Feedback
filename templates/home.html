@@ -7,9 +7,17 @@
 {% block content %}
 <h1 class="display-4">Feedback</h1>
 <hr>
-<div class="p-5">
-    <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nemo, excepturi officia asperiores nulla
-        eveniet unde obcaecati deleniti autem at quibusdam! Ea veniam reiciendis iste quaerat deserunt assumenda
-        voluptatem tempora consequuntur.</p>
+{% if feedback %}
+<div id="feedback">
+    {% for fb in feedback %}
+    <div class="card my-2">
+        <div class="card-body">
+            <h5 class="card-title">{{fb.title}}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{fb.username}}</h6>
+            <p class="card-text">{{fb.content}}</p>
+        </div>
+    </div>
+    {% endfor %}
 </div>
+{% endif %}
 {% endblock %}

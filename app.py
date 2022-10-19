@@ -20,15 +20,19 @@ connect_db(app)
 @app.route('/')
 def home_page():
     """Shows all feedback"""
-
-    return render_template('home.html')
+    feedback = Feedback.query.all()
+    return render_template('home.html', feedback=feedback)
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register_user():
     """Show and process the sign up form for new users"""
-    form = RegisterForm()
 
+    if 'username' in session:
+        flash("You are already logged in!", "warning")
+        return redirect('/')
+
+    form = RegisterForm()
     if form.validate_on_submit():
         new_user = create_new_user(form)
         db.session.add(new_user)
