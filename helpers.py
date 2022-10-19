@@ -1,3 +1,4 @@
+from flask import session
 from models import User
 
 
@@ -9,3 +10,8 @@ def create_new_user(form):
     last_name = form.last_name.data
     return User.register(username=username, password=password,
                          email=email, first_name=first_name, last_name=last_name)
+
+
+def authenticate_user(username):
+    if username == session.get('username'):
+        return True

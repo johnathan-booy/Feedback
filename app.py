@@ -2,8 +2,8 @@ from flask import Flask, request, render_template, redirect, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from models import db, connect_db, User, Feedback
-from forms import LoginForm, RegisterForm
-from helpers import create_new_user
+from forms import LoginForm, RegisterForm, FeedbackForm
+from helpers import create_new_user, authenticate_user
 
 app = Flask(__name__)
 
@@ -56,7 +56,7 @@ def register_user():
 def login_user():
     """Show and process the login form for existing users"""
 
-    if 'user_id' in session:
+    if 'username' in session:
         flash("You are already logged in!", "warning")
         return redirect('/')
 
@@ -88,32 +88,51 @@ def logout_user():
 def show_user_details(username):
     """Show details about the current user. You must be logged in as the specified user to see this page"""
 
-    if username != session.get('username'):
-        flash("You don't have permission to view this page.", "warning")
+    if authenticate_user(username):
+        user = User.query.filter_by(username=username).first()
+
+        if user:
+            feedback = Feedback.query.filter_by(username=username).all()
+            return render_template("user.html", user=user, feedback=feedback)
+    else:
+        flash("You don't have permision to view that page!", "warning")
         return redirect('/')
 
-    user = User.query.filter_by(username=username).first()
 
-    if user:
-        feedback = Feedback.query.filter_by(username=username).all()
-        return render_template("user.html", user=user, feedback=feedback)
-
-
-@app.route('/user/<username>/delete', methods=['POST'])
+@app.route('/users/<username>/delete', methods=['POST'])
 def delete_user(username):
     """Delete user if they are signed in"""
 
-    user = User.query.filter_by(username=username).first()
+    if authenticate_user(username):
+        user = User.query.filter_by(username=username).first()
+        db.session.delete(user)
+        db.session.commit()
+        session.pop('username')
+        flash("User has been deleted", 'success')
+    else:
+        flash("You don't have permission to delete this user!", 'warning')
 
-    if username != session.get('username'):
-        flash("You don't have permission to delete this user!", 'danger')
-        return redirect('/')
-
-    db.session.delete(user)
-    db.session.commit()
-    session.pop('username')
-    flash("User has been deleted", 'success')
     return redirect('/')
+
+
+@app.route('/users/<username>/feedback/add', methods=['GET', 'POST'])
+def add_feedback(username):
+    """Show and process the add feedback form"""
+
+    if authenticate_user(username):
+        form = FeedbackForm()
+        if form.validate_on_submit():
+            feedback = Feedback(username=username)
+            form.populate_obj(feedback)
+            db.session.add(feedback)
+            db.session.commit()
+            flash("Feedback added!", "success")
+            return redirect(f'/users/{username}')
+
+        return render_template("add-feedback.html", form=form)
+    else:
+        flash("You don't have permision to view that page!", "warning")
+        return redirect("/")
 
 
 @app.route('/feedback/<int:feedback_id>/delete', methods=['POST'])
@@ -122,11 +141,11 @@ def delete_feedback(feedback_id):
 
     feedback = Feedback.query.get(feedback_id)
 
-    if feedback.username != session.get('username'):
-        flash("You don't have permission to delete this feedback!", 'danger')
+    if authenticate_user(feedback.username):
+        db.session.delete(feedback)
+        db.session.commit()
+        flash("Feedback has been deleted", 'success')
+        return redirect(f'/users/{feedback.username}')
+    else:
+        flash("You don't have permission to delete that feedback!", "warning")
         return redirect('/')
-
-    db.session.delete(feedback)
-    db.session.commit()
-    flash("Feedback has been deleted", 'success')
-    return redirect(f'/users/{feedback.username}')

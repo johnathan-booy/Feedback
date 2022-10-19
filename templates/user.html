@@ -8,7 +8,7 @@
 <h1 class="display-4">Profile</h1>
 <hr>
 <div style="max-width: 500px;">
-    <form action="/user/{{user.username}}/delete" method="POST">
+    <form action="/users/{{user.username}}/delete" method="POST">
         <button class="btn btn-sm btn-outline-danger"><i class="fa-solid fa-trash"></i> <span class="mx-1">Delete</span>
         </button>
     </form>
@@ -32,8 +32,9 @@
             </tr>
         </tbody>
     </table>
-
 </div>
+
+<a href="/users/{{user.username}}/feedback/add" class="btn btn-success">Add Feedback</a>
 
 {% if feedback %}
 <div id="feedback">
