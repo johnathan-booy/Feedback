@@ -19,7 +19,8 @@ connect_db(app)
 
 @app.route('/')
 def home_page():
-    """Shows home page"""
+    """Shows all feedback"""
+
     return render_template('home.html')
 
 
