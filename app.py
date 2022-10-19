@@ -4,13 +4,14 @@ from sqlalchemy.exc import IntegrityError
 from models import db, connect_db, User, Feedback
 from forms import LoginForm, RegisterForm, FeedbackForm
 from helpers import create_new_user, authenticate_user
+import os
 
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///flask_feedback'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
-app.config['SECRET_KEY'] = "milaisthebestdogintheworld"
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "hellosecret123")
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 debug = DebugToolbarExtension(app)
 
