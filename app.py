@@ -135,6 +135,28 @@ def add_feedback(username):
         return redirect("/")
 
 
+@app.route('/feedback/<int:feedback_id>/update', methods=['GET', 'POST'])
+def update_feedback(feedback_id):
+    """Update feedback if the correct user is signed in"""
+
+    feedback = Feedback.query.get(feedback_id)
+
+    if authenticate_user(feedback.username):
+        form = FeedbackForm(obj=feedback)
+
+        if form.validate_on_submit():
+            feedback.title = form.title.data
+            feedback.content = form.content.data
+            db.session.commit()
+            flash("Feedback updated!", "success")
+            return redirect(f'/users/{feedback.username}')
+
+        return render_template('update-feedback.html', form=form)
+    else:
+        flash("You don't have permission to edit that feedback!", "warning")
+        return redirect('/')
+
+
 @app.route('/feedback/<int:feedback_id>/delete', methods=['POST'])
 def delete_feedback(feedback_id):
     """Delete feedback if the correct user is signed in"""

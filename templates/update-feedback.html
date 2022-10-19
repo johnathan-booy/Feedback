@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Update Feedback</title>
+{% endblock %}
+
+{% block content %}
+<h1 class="display-4">Update Feedback</h1>
+<hr>
+<div class="container">
+    <form method="post">
+        {% include 'wtform.html' %}
+        <button class="btn btn-success">Update</button>
+    </form>
+</div>
+{% endblock %}
